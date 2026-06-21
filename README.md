@@ -10,7 +10,7 @@ Simple aiogram 3 bot for allocating FastX OTP numbers, polling incoming OTPs, sa
 - SQLite tables created automatically on startup
 - FastX API client with structured error logging
 - OTP polling every 5 seconds
-- Render background worker deployment
+- Render free web service deployment
 
 ## Environment
 
@@ -53,10 +53,10 @@ python3 -m venv .venv
 
 ### Render
 
-Use a Render **Background Worker**. The bot uses Telegram polling and does not expose an HTTP port.
+Use a Render **Web Service** on the free instance type. The app exposes a tiny health endpoint for Render and runs the Telegram bot polling loop in the same process.
 
 1. Open Render.
-2. Create a new Blueprint or Background Worker from `https://github.com/Girma35/et_otp`.
+2. Create a new Web Service from `https://github.com/Girma35/et_otp`.
 3. Use these commands if Render asks manually:
    - Build command: `pip install -r requirements.txt`
    - Start command: `python -m app.bot`
@@ -66,7 +66,9 @@ Use a Render **Background Worker**. The bot uses Telegram polling and does not e
    - `ADMIN_ID`
 5. Deploy and open the service logs.
 
-The repo includes `.python-version` with Python `3.12` and `render.yaml` for a native Render worker.
+The repo includes `.python-version` with Python `3.12` and `render.yaml` for a native Render web service.
+
+Free Render services can sleep after inactivity. When the service sleeps, Telegram polling stops until Render wakes it again. For always-on OTP delivery, use a paid Render instance, a VPS, or another always-on host.
 
 ### VPS
 

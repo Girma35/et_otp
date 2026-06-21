@@ -15,6 +15,7 @@ from app.database import (
     init_db,
 )
 from app.handlers import admin, number, otp, start
+from app.health import start_health_server, stop_health_server
 from app.logging_config import configure_logging
 from app.scheduler import build_scheduler
 from app.services.fastx import FastXClient
@@ -33,6 +34,7 @@ async def main() -> None:
     session_factory = build_session_factory(engine)
     fastx = FastXClient(settings)
     scheduler = build_scheduler(bot, session_factory, fastx, settings)
+    health_runner = await start_health_server()
 
     dispatcher.update.middleware(DbSessionMiddleware(session_factory))
     dispatcher["settings"] = settings
@@ -51,6 +53,7 @@ async def main() -> None:
         await dispatcher.start_polling(bot)
     finally:
         scheduler.shutdown(wait=False)
+        await stop_health_server(health_runner)
         await fastx.close()
         await close_db(engine)
         await bot.session.close()
