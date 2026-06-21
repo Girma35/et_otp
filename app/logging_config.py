@@ -40,5 +40,4 @@ def configure_logging(level: str) -> None:
     root_logger.setLevel(level)
 
     logging.getLogger("aiogram.event").setLevel(logging.INFO)
-    logging.getLogger("apscheduler").setLevel(logging.INFO)
-
+    logging.getLogger("apscheduler").setLevel(logging.WARNING)

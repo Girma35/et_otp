@@ -45,8 +45,14 @@ async def poll_otps(
 ) -> None:
     try:
         incoming_otps = await fastx.fetch_otps()
-    except FastXError:
-        logger.exception("otp_poll_failed")
+    except FastXError as exc:
+        logger.warning(
+            "otp_poll_failed",
+            extra={
+                "exception_type": type(exc).__name__,
+                "exception_message": str(exc),
+            },
+        )
         return
 
     if not incoming_otps:

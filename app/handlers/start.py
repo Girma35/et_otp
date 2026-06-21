@@ -20,7 +20,7 @@ HELP_TEXT = (
     "/otps - View OTP inbox\n"
     "/status - Check bot status\n\n"
     "Admin commands:\n"
-    "/stats, /users, /broadcast"
+    "/stats, /users, /broadcast, /fastx"
 )
 
 
@@ -40,4 +40,3 @@ async def start_command(message: Message, session: AsyncSession) -> None:
 @router.message(lambda message: message.text == "ℹ️ Help")
 async def help_command(message: Message) -> None:
     await message.answer(HELP_TEXT, reply_markup=main_menu())
-

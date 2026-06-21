@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import Settings
 from app.models import Number, Otp, User
+from app.services.fastx import FastXClient, FastXError
 from app.utils import format_utc, html_escape, utc_now
 
 logger = logging.getLogger(__name__)
@@ -111,3 +112,22 @@ async def broadcast_command(
 
     await message.answer(f"Broadcast complete. Sent: {sent}. Failed: {failed}.")
 
+
+@router.message(Command("fastx"))
+async def fastx_command(
+    message: Message,
+    settings: Settings,
+    fastx: FastXClient,
+) -> None:
+    if not _is_admin(message, settings):
+        await message.answer("Admin only.")
+        return
+
+    try:
+        await fastx.ping()
+    except FastXError as exc:
+        logger.exception("admin_fastx_check_failed")
+        await message.answer(f"FastX check failed: {html_escape(exc)}")
+        return
+
+    await message.answer("FastX check OK.")

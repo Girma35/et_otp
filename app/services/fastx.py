@@ -86,6 +86,9 @@ class FastXClient:
 
         return otps
 
+    async def ping(self) -> None:
+        await self._request_json("GET", "/api/liveaccess")
+
     async def live_access(self) -> dict[str, Any]:
         return await self._request_json("GET", "/api/liveaccess")
 
@@ -145,10 +148,26 @@ class FastXClient:
             return data
 
         except httpx.TimeoutException as exc:
-            logger.error("fastx_timeout", extra={"url": url}, exc_info=True)
+            logger.error(
+                "fastx_timeout",
+                extra={
+                    "url": url,
+                    "exception_type": type(exc).__name__,
+                    "exception_message": str(exc),
+                },
+                exc_info=True,
+            )
             raise FastXError("FastX request timed out.") from exc
         except httpx.HTTPError as exc:
-            logger.error("fastx_http_error", extra={"url": url}, exc_info=True)
+            logger.error(
+                "fastx_http_error",
+                extra={
+                    "url": url,
+                    "exception_type": type(exc).__name__,
+                    "exception_message": str(exc),
+                },
+                exc_info=True,
+            )
             raise FastXError("FastX request failed.") from exc
 
     def _extract_items(self, data: dict[str, Any]) -> list[dict[str, Any]]:
@@ -235,4 +254,3 @@ class FastXClient:
         if parsed.tzinfo is None:
             return parsed.replace(tzinfo=timezone.utc)
         return parsed.astimezone(timezone.utc)
-
