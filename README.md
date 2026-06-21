@@ -70,6 +70,29 @@ The repo includes `.python-version` with Python `3.12` and `render.yaml` for a n
 
 Free Render services can sleep after inactivity. When the service sleeps, Telegram polling stops until Render wakes it again. For always-on OTP delivery, use a paid Render instance, a VPS, or another always-on host.
 
+### Northflank
+
+Use a combined service with Buildpack:
+
+```text
+Repository: Girma35/et_otp
+Branch: main
+Build type: Buildpack
+Start command: python -m app.bot
+Port: 8000 HTTP
+```
+
+Set runtime environment variables:
+
+```env
+BOT_TOKEN=
+FASTX_API_KEY=
+ADMIN_ID=
+PORT=8000
+```
+
+The included `Procfile` lets Buildpack discover the start command automatically.
+
 ### VPS
 
 ```bash
