@@ -10,7 +10,7 @@ Simple aiogram 3 bot for allocating FastX OTP numbers, polling incoming OTPs, sa
 - SQLite tables created automatically on startup
 - FastX API client with structured error logging
 - OTP polling every 5 seconds
-- Docker support
+- Render background worker deployment
 
 ## Environment
 
@@ -49,31 +49,37 @@ If your system command is `python3` instead of `python3.12`, use:
 python3 -m venv .venv
 ```
 
-## Docker
-
-```bash
-docker compose up --build
-```
-
 ## Production
 
-On a VPS:
+### Render
+
+Use a Render **Background Worker**. The bot uses Telegram polling and does not expose an HTTP port.
+
+1. Open Render.
+2. Create a new Blueprint or Background Worker from `https://github.com/Girma35/et_otp`.
+3. Use these commands if Render asks manually:
+   - Build command: `pip install -r requirements.txt`
+   - Start command: `python -m app.bot`
+4. Set environment variables:
+   - `BOT_TOKEN`
+   - `FASTX_API_KEY`
+   - `ADMIN_ID`
+5. Deploy and open the service logs.
+
+The repo includes `.python-version` with Python `3.12` and `render.yaml` for a native Render worker.
+
+### VPS
 
 ```bash
 git clone https://github.com/Girma35/et_otp.git
 cd et_otp
 cp .env.example .env
 nano .env
-docker compose up -d --build
-docker compose logs -f
+python3.12 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python -m app.bot
 ```
-
-For Railway, Render, or Coolify:
-
-1. Connect the GitHub repository.
-2. Set environment variables: `BOT_TOKEN`, `FASTX_API_KEY`, `ADMIN_ID`.
-3. Use Dockerfile deployment.
-4. Start command is already defined as `python -m app.bot`.
 
 ## FastX API Mapping
 
@@ -124,4 +130,3 @@ git remote add origin https://github.com/Girma35/et_otp.git
 git branch -M main
 git push -u origin main
 ```
-
